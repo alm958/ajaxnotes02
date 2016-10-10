@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>ajaxnotes</title>
+        <link rel="stylesheet" type="text/css" href="../static/styles/master.css">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+        <script type="text/javascript">
+            $(document).ready(function(){
+
+                $.get('/notes', function(res) {
+                    $('#posts').html(res);
+                });
+
+                $('form.newnote').submit(function(event){
+                    var note_form = $( this ).serializeArray();
+                    event.preventDefault();
+
+                    var $posts = $('#posts');
+                    var jnote = {
+                        title:note_form[0]['value'],
+                        content:note_form[1]['value']
+                    }
+
+                    $.ajax({
+                        method: 'POST',
+                        url: '/notes/create',
+                        data:jnote,
+                        success:function(res){
+                            $('#posts').append(res);
+                        },
+                    });
+                })
+
+                $('#posts').on("submit","form.delete", function(){
+                    var del_form = $( this ).serializeArray();
+                    var jdel = {
+                        id: del_form[0]['value'],
+                    }
+                    $.ajax({
+                        method: 'POST',
+                        url: '/notes/delete',
+                        data: jdel,
+                        success:function(psts){
+                            $.get('/notes', function(res) {
+                                $('#posts').html(res);
+                            });
+                        },
+                    });
+                    return false;
+                });
+
+                $('#posts').on("change","form.content", function(){
+                    var update_form = $( this ).serializeArray();
+                    console.log(update_form);
+                    var jupdt = {
+                        id: update_form[0]['value'],
+                        content:update_form[1]['value'],
+                    };
+                    console.log(jupdt.id);
+                    $.ajax({
+                        method: 'POST',
+                        url: '/notes/update',
+                        data: jupdt,
+                        success:function(res){
+                        },
+                    });
+                    return false;
+                });
+
+            })
+        </script>
+    </head>
+    <body id="main">
+        <h3>My Notes</h3>
+        <div id="posts"></div>
+        <form class="newnote" action="/notes/create" method="post">
+            <input type="text" name="title" value="add title"><br>
+            Note:<br>
+            <textarea class="form-control" type='text' name='content' rows="4" cols="60"></textarea><br>
+            <input type="submit" name="submit" value="Add Note">
+        </form>
+    </body>
+</html>

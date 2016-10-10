@@ -1,0 +1,11 @@
+<div class="post" id="{{notes.id}}">
+    <h3>{{notes.title}}</h3>
+    <form action="/notes/delete" class="delete" method="post">
+        <input type="hidden" name="id" value="{{notes.id}}">
+        <input type="submit" name="delete" value="Delete">
+    </form>
+    <form action="notes/" class="content">
+        <input type="hidden" name="id" value="{{notes.id}}">
+        <textarea class="form-control" type='text' name='content' rows="6" cols="31">{{notes.content}}</textarea>
+    </form>
+</div>
